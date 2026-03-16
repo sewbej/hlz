@@ -3,6 +3,7 @@ const ASSETS = [
   './',
   './index.html',
   './html5-qrcode.min.js',
+  './jsbarcode.min.js',
   './qrcode.min.js',
   './manifest.json'
 ];

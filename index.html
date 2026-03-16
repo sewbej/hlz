@@ -6,6 +6,7 @@
     <title>HLZ skaner</title>
     <script src="html5-qrcode.min.js"></script>
     <script src="qrcode.min.js"></script>
+    <script src="jsbarcode.min.js"></script>
     
     <style>
         body { 
@@ -42,8 +43,36 @@
         #scanner-overlay::before { top: -4px; left: -4px; border-right: 0; border-bottom: 0; border-radius: 8px 0 0 0; }
         #scanner-overlay::after { bottom: -4px; right: -4px; border-left: 0; border-top: 0; border-radius: 0 0 8px 0; }
 
-        #result-container { margin-top: 2px; padding: 20px; padding-top: 2px; background: white; border-radius: 10px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: none; z-index: 20; position: relative; width: 100%; max-width: 500px; box-sizing: border-box; }
-        #qrcode { margin-top: 1px; display: flex; justify-content: center; }
+
+
+#result-container { 
+    margin-top: 2px; 
+    padding: 20px; 
+    padding-top: 2px; /* Zmniejszyłem górny odstęp wewnątrz białego okienka */
+    background: white; 
+    border-radius: 10px; 
+    text-align: center; 
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+    display: none; 
+    z-index: 20; 
+    position: relative; 
+    width: 100%; 
+    max-width: 500px; 
+    box-sizing: border-box; 
+}
+
+/* DODAJ TĘ REGUŁĘ, ABY USUNĄĆ ODSTĘP POD NUMEREM */
+#result-container p {
+    margin-bottom: 0px; /* Mały odstęp zamiast domyślnego dużego */
+    margin-top: 0px;
+}
+
+#qrcode { 
+    margin-top: 0px; /* Resetujemy margines kontenera z kodami */
+    display: flex; 
+    justify-content: center; 
+}
+
         #status { color: #888; font-size: 0.9em; margin-top: 3px; text-align: center; font-weight: bold; min-height: 1.2em; }
         strong { font-size: 1.2em; color: #333; }
     </style>
@@ -95,7 +124,7 @@
             ).catch(err => console.error(err));
         }
 
-        function processValidCode(code) {
+function processValidCode(code) {
             isPaused = true; // Aktywuj blokadę
 
             if (navigator.vibrate) { navigator.vibrate(200); }
@@ -107,12 +136,34 @@
             scanResultText.innerText = code;
             resultContainer.style.display = 'block';
 
-            // Generowanie QR
+// Czyszczenie kontenera ze starych kodów
             qrContainer.innerHTML = "";
-            new QRCode(qrContainer, {
+            
+            // WYMUSZENIE UKŁADU PIONOWEGO (jeden nad drugim)
+            qrContainer.style.display = "flex";
+            qrContainer.style.flexDirection = "column";
+            qrContainer.style.alignItems = "center"; // Wyśrodkowanie obu kodów
+
+            // 1. GENEROWANIE KODU 1D (Kreskowego)
+            const barcodeCanvas = document.createElement("canvas");
+            barcodeCanvas.style.marginBottom = "5px"; // Odstęp między kodem kreskowym a QR
+            qrContainer.appendChild(barcodeCanvas);
+
+            JsBarcode(barcodeCanvas, code, {
+                format: "CODE128",
+                width: 2,           
+                height: 40,         
+                displayValue: false 
+            });
+
+            // 2. GENEROWANIE KODU QR
+            const qrDiv = document.createElement("div");
+            qrContainer.appendChild(qrDiv);
+
+            new QRCode(qrDiv, {
                 text: code,
-                width: 200,
-                height: 200,
+                width: 180,
+                height: 180,
                 correctLevel: QRCode.CorrectLevel.H
             });
             
