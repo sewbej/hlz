@@ -196,19 +196,19 @@
 				format: "CODE128",
 				width: 2,
 				height: 40,
-				displayValue: false
+				displayValue: true
 			});
 
 			// 2. GENEROWANIE KODU QR
-			const qrDiv = document.createElement("div");
-			qrContainer.appendChild(qrDiv);
+			//const qrDiv = document.createElement("div");
+			//qrContainer.appendChild(qrDiv);
 
-			new QRCode(qrDiv, {
-				text: code,
-				width: 180,
-				height: 180,
-				correctLevel: QRCode.CorrectLevel.H
-			});
+			//new QRCode(qrDiv, {
+			//	text: code,
+			//	width: 180,
+			//	height: 180,
+			//	correctLevel: QRCode.CorrectLevel.H
+			//});
 
 			// Odblokowanie po 3 sekundach
 			setTimeout(() => {
